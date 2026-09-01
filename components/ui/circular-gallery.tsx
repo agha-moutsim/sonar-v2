@@ -1,0 +1,246 @@
+"use client";
+
+import * as React from "react";
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { cn } from "@/lib/utils";
+
+export interface CircularGalleryProps {
+  images?: string[];
+  count?: number;
+  tilt?: number;
+  radius?: number;
+  itemWidth?: number;
+  itemHeight?: number;
+  autoRotate?: boolean;
+  autoRotateSpeed?: number;
+  showPreview?: boolean;
+  parallax?: boolean;
+  className?: string;
+}
+
+export function CircularGallery({
+  images,
+  count = 150,
+  tilt = 55,
+  radius = 400,
+  itemWidth = 45,
+  itemHeight = 60,
+  autoRotate = true,
+  autoRotateSpeed = 3,
+  showPreview = true,
+  parallax = true,
+  className,
+}: CircularGalleryProps) {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const galleryRef = useRef<HTMLDivElement>(null);
+  const previewRef = useRef<HTMLImageElement>(null);
+  const previewWrapRef = useRef<HTMLDivElement>(null);
+
+  const srcOf = (i: number) =>
+    images && images.length > 0 ? images[i % images.length] : undefined;
+  const defaultPreview = srcOf(0);
+
+  const optsRef = useRef({ autoRotate, autoRotateSpeed, parallax, tilt });
+  useEffect(() => {
+    optsRef.current = { autoRotate, autoRotateSpeed, parallax, tilt };
+  }, [autoRotate, autoRotateSpeed, parallax, tilt]);
+
+  useEffect(() => {
+    const root = rootRef.current;
+    const gallery = galleryRef.current;
+    if (!root || !gallery) return;
+
+    const items = gsap.utils.toArray<HTMLElement>(gallery.querySelectorAll("[data-ring-item]"));
+    if (items.length === 0) return;
+
+    const angleIncrement = 360 / items.length;
+    const baseAngles = items.map((_, i) => i * angleIncrement - 90);
+
+    items.forEach((item, i) => {
+      gsap.set(item, {
+        rotationY: 90,
+        rotationZ: baseAngles[i],
+        transformOrigin: `50% ${radius}px`,
+      });
+    });
+    gsap.set(gallery, { rotationY: 0 });
+    if (previewWrapRef.current) gsap.set(previewWrapRef.current, { opacity: 0 });
+
+    const setZ = items.map((item) => gsap.quickSetter(item, "rotationZ", "deg"));
+
+    gsap.fromTo(
+      gallery,
+      { rotationX: optsRef.current.tilt + 16, opacity: 0 },
+      { rotationX: optsRef.current.tilt, opacity: 1, duration: 1.4, ease: "power3.out" },
+    );
+    gsap.from(items, {
+      opacity: 0,
+      duration: 0.7,
+      ease: "power1.out",
+      stagger: { amount: 1, from: "random" },
+    });
+
+    let current = 0;
+    let target = 0;
+    let isInViewport = true;
+    let isPageVisible = !document.hidden;
+    let dragging = false;
+    const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let reducedMotion = reducedMotionQuery.matches;
+
+    const tick = () => {
+      if (!isInViewport || !isPageVisible) return;
+      const { autoRotate: auto, autoRotateSpeed: speed } = optsRef.current;
+      if (auto && !reducedMotion && !dragging) target += (speed / 60) * gsap.ticker.deltaRatio();
+      current += (target - current) * 0.05;
+      for (let i = 0; i < setZ.length; i++) setZ[i](baseAngles[i] + current);
+    };
+    gsap.ticker.add(tick);
+
+    const visibilityObserver = new IntersectionObserver(
+      ([entry]) => {
+        isInViewport = entry.isIntersecting;
+      },
+      { rootMargin: "160px" },
+    );
+    const onVisibilityChange = () => {
+      isPageVisible = !document.hidden;
+    };
+    const onReducedMotionChange = (event: MediaQueryListEvent) => {
+      reducedMotion = event.matches;
+    };
+    visibilityObserver.observe(root);
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    reducedMotionQuery.addEventListener("change", onReducedMotionChange);
+
+    let lastX = 0;
+
+    const onPointerDown = (e: PointerEvent) => {
+      dragging = true;
+      lastX = e.clientX;
+      hidePreviewImage();
+      root.setPointerCapture?.(e.pointerId);
+      root.style.cursor = "grabbing";
+    };
+    const onPointerMove = (e: PointerEvent) => {
+      if (optsRef.current.parallax) {
+        const rect = root.getBoundingClientRect();
+        const px = (e.clientX - rect.left) / rect.width - 0.5;
+        const py = (e.clientY - rect.top) / rect.height - 0.5;
+        gsap.to(gallery, {
+          rotationX: optsRef.current.tilt + py * 3,
+          rotationY: px * 3,
+          duration: 1.4,
+          ease: "power2.out",
+          overwrite: "auto",
+        });
+      }
+      if (dragging) {
+        target += (e.clientX - lastX) * 0.3;
+        lastX = e.clientX;
+      }
+    };
+    const endDrag = (e: PointerEvent) => {
+      if (!dragging) return;
+      dragging = false;
+      hidePreviewImage();
+      root.releasePointerCapture?.(e.pointerId);
+      root.style.cursor = "grab";
+    };
+
+    root.addEventListener("pointerdown", onPointerDown);
+    root.addEventListener("pointermove", onPointerMove);
+    root.addEventListener("pointerup", endDrag);
+    root.addEventListener("pointerleave", endDrag);
+
+    return () => {
+      gsap.ticker.remove(tick);
+      visibilityObserver.disconnect();
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      reducedMotionQuery.removeEventListener("change", onReducedMotionChange);
+      root.removeEventListener("pointerdown", onPointerDown);
+      root.removeEventListener("pointermove", onPointerMove);
+      root.removeEventListener("pointerup", endDrag);
+      root.removeEventListener("pointerleave", endDrag);
+      gsap.killTweensOf(gallery);
+    };
+  }, [count, radius, images]);
+
+  const showPreviewImage = (src?: string) => {
+    const img = previewRef.current;
+    const wrap = previewWrapRef.current;
+    if (!img || !wrap || !src) return;
+    if (!img.src.endsWith(src)) img.src = src;
+    gsap.to(wrap, { opacity: 1, duration: 0.15, ease: "power2.out", overwrite: true });
+  };
+
+  const hidePreviewImage = () => {
+    const wrap = previewWrapRef.current;
+    if (!wrap) return;
+    gsap.to(wrap, { opacity: 0, duration: 0.25, ease: "power1.out", overwrite: true });
+  };
+
+  return (
+    <div
+      ref={rootRef}
+      className={cn(
+        "relative h-full w-full touch-none select-none [perspective:1500px]",
+        "bg-black",
+        className,
+      )}
+      style={{ cursor: "grab" }}
+    >
+      {showPreview && defaultPreview ? (
+        <div
+          ref={previewWrapRef}
+          className="pointer-events-none absolute left-1/2 top-[32%] z-0 inline-flex max-w-[86vw] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-xl opacity-0 shadow-2xl ring-1 ring-white/10"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            ref={previewRef}
+            src={defaultPreview}
+            alt=""
+            className="h-auto max-h-[75vh] w-auto max-w-full object-contain"
+          />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-white/10" />
+        </div>
+      ) : null}
+
+      <div
+        ref={galleryRef}
+        className="absolute left-1/2 top-[32%] z-10 -translate-x-1/2 -translate-y-1/2 [transform-style:preserve-3d]"
+      >
+        {Array.from({ length: count }).map((_, i) => {
+          const src = srcOf(i);
+          return (
+            <div
+              key={i}
+              data-ring-item
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[3px] bg-neutral-800 shadow-md shadow-black/40 ring-1 ring-white/10 [transform-style:preserve-3d]"
+              style={{ width: itemWidth, height: itemHeight, margin: 10 }}
+            >
+              {src ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={src}
+                  alt=""
+                  onMouseEnter={() => showPreviewImage(src)}
+                  onMouseLeave={hidePreviewImage}
+                  className="h-full w-full object-cover object-top"
+                />
+              ) : null}
+            </div>
+          );
+        })}
+      </div>
+
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 z-20 bg-[radial-gradient(circle_at_50%_50%,transparent_58%,rgba(0,0,0,0.6))]"
+      />
+    </div>
+  );
+}
+
+export default CircularGallery;

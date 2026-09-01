@@ -1,0 +1,480 @@
+/* Landing hero — faithful port of land-page/index.html, scoped under .landing-hero */
+
+.landing-hero,
+.landing-hero * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.landing-hero {
+  position: relative;
+  font-family: "Poppins", sans-serif;
+  color: #c9cdd6;
+}
+
+@keyframes navIn {
+  from {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== NAVBAR ===== */
+.landing-hero .navbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px clamp(24px, 4vw, 56px);
+  background: transparent;
+  animation: navIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.landing-hero .nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: "Clash Display", "Space Grotesk", sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  color: #e8eaf0;
+  text-decoration: none;
+}
+
+.landing-hero .logo-mark {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  background: linear-gradient(135deg, #9aa0ac, #565c6b);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.18);
+  animation: markPulse 3s ease-in-out infinite;
+}
+
+@keyframes markPulse {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(45deg) scale(1.15);
+  }
+}
+
+.landing-hero .nav-links {
+  display: flex;
+  align-items: center;
+  gap: clamp(20px, 3vw, 40px);
+  list-style: none;
+}
+
+.landing-hero .nav-item {
+  animation: navIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.landing-hero .nav-item:nth-child(1) {
+  animation-delay: 0.15s;
+}
+.landing-hero .nav-item:nth-child(2) {
+  animation-delay: 0.25s;
+}
+.landing-hero .nav-item:nth-child(3) {
+  animation-delay: 0.35s;
+}
+.landing-hero .nav-item:nth-child(4) {
+  animation-delay: 0.45s;
+}
+
+.landing-hero .nav-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 2px;
+  font-family: "Satoshi", "Manrope", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #b9bec9;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.landing-hero .nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background: rgba(154, 160, 172, 0.7);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.landing-hero .nav-link:hover {
+  color: #f2f3f7;
+}
+.landing-hero .nav-link:hover::after {
+  transform: scaleX(1);
+}
+
+.landing-hero .chev {
+  transition: transform 0.35s ease;
+}
+.landing-hero .has-dropdown:hover .chev {
+  transform: rotate(180deg);
+}
+
+.landing-hero .dropdown {
+  position: absolute;
+  top: calc(100% + 14px);
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  min-width: 210px;
+  padding: 8px;
+  border-radius: 14px;
+  background: rgba(20, 23, 30, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(16px);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0.35s;
+}
+
+.landing-hero .has-dropdown:hover .dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.landing-hero .dd-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 9px;
+  font-family: "Satoshi", "Manrope", sans-serif;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #c6cbd6;
+  text-decoration: none;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    padding-left 0.25s ease;
+}
+
+.landing-hero .dd-icon {
+  font-size: 13px;
+  color: #9aa0ac;
+  display: inline-flex;
+  align-items: center;
+}
+
+.landing-hero .dd-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #f2f3f7;
+  padding-left: 16px;
+}
+
+/* CTA - VengeanceUI AnimatedButton (vanilla port, dark theme) */
+@property --mask-x {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+
+.landing-hero .animated-btn {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 13px 28px;
+  border-radius: 8px;
+  background: #000;
+  border: 1px solid #222;
+  color: #f5f5f5;
+  font-family: "Satoshi", "Manrope", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  --shine: rgba(255, 255, 255, 0.66);
+  transition: transform 0.15s;
+  animation: navIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.55s both;
+}
+
+.landing-hero .animated-btn:hover {
+  transform: scale(1.01);
+}
+.landing-hero .animated-btn:active {
+  transform: scale(0.97);
+}
+
+.landing-hero .ab-text {
+  position: relative;
+  z-index: 2;
+  --mask-x: 100%;
+  -webkit-mask-image: linear-gradient(
+    -75deg,
+    #fff calc(var(--mask-x) + 20%),
+    transparent calc(var(--mask-x) + 30%),
+    #fff calc(var(--mask-x) + 100%)
+  );
+  mask-image: linear-gradient(
+    -75deg,
+    #fff calc(var(--mask-x) + 20%),
+    transparent calc(var(--mask-x) + 30%),
+    #fff calc(var(--mask-x) + 100%)
+  );
+  animation: textShine 2s linear infinite;
+}
+
+@keyframes textShine {
+  0% {
+    --mask-x: 100%;
+  }
+  50% {
+    --mask-x: -100%;
+  }
+  100% {
+    --mask-x: -100%;
+  }
+}
+
+.landing-hero .ab-border {
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  padding: 1px;
+  pointer-events: none;
+  background: linear-gradient(-75deg, transparent 30%, var(--shine) 50%, transparent 70%);
+  background-size: 200% 100%;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  animation: borderShine 2s linear infinite;
+}
+
+@keyframes borderShine {
+  0% {
+    background-position: 100% 0;
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  50% {
+    background-position: 0% 0;
+    opacity: 0;
+  }
+  100% {
+    background-position: 0% 0;
+    opacity: 0;
+  }
+}
+
+/* ===== HERO ===== */
+.landing-hero .hero {
+  position: relative;
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse 60% 22% at 22% -5%, rgba(70, 76, 88, 0.55), transparent 60%),
+    linear-gradient(
+      180deg,
+      #23262c 0%,
+      #191b21 16%,
+      #0e1014 34%,
+      #0a0c0e 60%,
+      #0d0f13 82%,
+      #13151b 100%
+    );
+  overflow: hidden;
+}
+
+.landing-hero .hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 45% 35% at 0% 42%, rgba(0, 0, 0, 0.35), transparent 70%),
+    radial-gradient(ellipse 45% 40% at 100% 58%, rgba(0, 0, 0, 0.3), transparent 70%);
+  pointer-events: none;
+}
+
+.landing-hero .hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 500 500' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23m)'/%3E%3C/svg%3E");
+  opacity: 0.11;
+  pointer-events: none;
+}
+
+.landing-hero .hero-inner {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 0 clamp(20px, 5vw, 70px);
+}
+
+.landing-hero .hero-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: clamp(60px, 9vh, 92px);
+  text-align: center;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.landing-hero .ghost-title {
+  font-family: "Unbounded", "Clash Display", sans-serif;
+  font-size: clamp(40px, 6.4vw, 98px);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: rgba(148, 156, 174, 0.46);
+  user-select: none;
+  white-space: nowrap;
+}
+
+.landing-hero .subheadline {
+  font-family: "Satoshi", "Manrope", sans-serif;
+  margin-top: clamp(18px, 3vh, 30px);
+  font-size: clamp(14px, 1.25vw, 18px);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: #9aa0ac;
+  line-height: 1.65;
+}
+
+.landing-hero #shark3d {
+  position: absolute;
+  left: -11%;
+  top: 2%;
+  width: 64vw;
+  height: 74vh;
+  pointer-events: none;
+}
+.landing-hero #shark3d canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.landing-hero .mission {
+  position: absolute;
+  left: 4.5%;
+  bottom: 4%;
+  max-width: 480px;
+  z-index: 3;
+  animation: navIn 1s cubic-bezier(0.22, 1, 0.36, 1) 0.7s both;
+}
+
+.landing-hero .mission h3 {
+  font-family: "Clash Display", "Space Grotesk", sans-serif;
+  font-size: clamp(22px, 2vw, 30px);
+  font-weight: 600;
+  color: #e8eaf0;
+  margin-bottom: 12px;
+}
+
+.landing-hero .mission p {
+  font-family: "Satoshi", "Manrope", sans-serif;
+  font-size: clamp(13px, 1.05vw, 15.5px);
+  font-weight: 400;
+  line-height: 1.75;
+  color: #8a91a0;
+}
+
+.landing-hero .mission b {
+  font-weight: 400;
+  color: #e8eaf0;
+}
+
+.landing-hero .map-card {
+  position: absolute;
+  right: 2%;
+  top: 38%;
+  width: clamp(420px, 48vw, 840px);
+  border-radius: 26px;
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.16);
+  animation: cardIn 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 0.3s;
+}
+
+.landing-hero .map-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 26px;
+}
+
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 720px) {
+  .landing-hero .ghost-title {
+    white-space: normal;
+  }
+  .landing-hero #shark3d {
+    width: 90vw;
+    height: 50vh;
+    top: 14%;
+  }
+  .landing-hero .map-card {
+    position: relative;
+    right: auto;
+    top: auto;
+    margin: 40px auto 0;
+    width: 90%;
+  }
+  .landing-hero .mission {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    margin: 30px auto 60px;
+    padding: 0 20px;
+  }
+}
