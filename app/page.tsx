@@ -10,6 +10,7 @@ import WalletFeatures from "@/components/WalletFeatures";
 import SonarRoadmap from "@/components/SonarRoadmap";
 import TeamSection from "@/components/TeamSection";
 import Partners from "@/components/Partners";
+import SonarFooter from "@/components/SonarFooter";
 
 export default function Home() {
   return (
@@ -26,6 +27,7 @@ export default function Home() {
       <SonarRoadmap />
       <TeamSection />
       <Partners />
+      <SonarFooter />
     </main>
   );
 }
