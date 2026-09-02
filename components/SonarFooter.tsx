@@ -30,59 +30,6 @@ const quadX = (t: number) =>
 const quadY = (t: number) =>
   (1 - t) * (1 - t) * 0.62 + 2 * (1 - t) * t * 0.1 + t * t * 0.16;
 
-function MaskLine({
-  children,
-  delay,
-  reduced,
-  outlined = false,
-}: {
-  children: React.ReactNode;
-  delay: number;
-  reduced: boolean;
-  outlined?: boolean;
-}) {
-  if (reduced) {
-    return (
-      <motion.span
-        className={`block ${outlined ? "text-transparent" : "text-white"}`}
-        style={outlined ? { WebkitTextStroke: "1.5px rgba(255,255,255,0.28)" } : undefined}
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true, margin: "-80px" }}
-        transition={{ duration: 0.6, delay }}
-      >
-        {children}
-      </motion.span>
-    );
-  }
-
-  return (
-    <span className="block overflow-hidden pb-[0.08em] -mb-[0.08em]">
-      <motion.span
-        className="block"
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, margin: "-80px" }}
-      >
-        <motion.span
-          className={`block will-change-transform ${outlined ? "text-transparent" : "text-white"}`}
-          style={outlined ? { WebkitTextStroke: "1.5px rgba(255,255,255,0.28)" } : undefined}
-          custom={delay}
-          variants={{
-            hidden: { y: "115%" },
-            show: (d: number) => ({
-              y: "0%",
-              transition: { duration: 0.9, ease: EASE, delay: d },
-            }),
-          }}
-        >
-          {children}
-        </motion.span>
-      </motion.span>
-    </span>
-  );
-}
-
 export default function SonarFooter() {
   const reduced = usePrefersReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
@@ -183,9 +130,20 @@ export default function SonarFooter() {
           </motion.p>
 
           <h2 className="mt-6 whitespace-nowrap font-display text-[10vw] font-black uppercase leading-[0.88] tracking-[-0.045em] text-white lg:text-[9vw]">
-            <MaskLine delay={0.05} reduced={reduced}>
-              Got Questions?
-            </MaskLine>
+            <span className="inline-flex overflow-hidden pb-[0.06em]">
+              {"Got Questions?".split("").map((ch, i) => (
+                <motion.span
+                  key={i}
+                  className="inline-block will-change-transform"
+                  initial={reduced ? { opacity: 0 } : { y: "112%", rotate: 9 }}
+                  whileInView={reduced ? { opacity: 1 } : { y: "0%", rotate: 0 }}
+                  viewport={{ once: true, margin: "-80px" }}
+                  transition={{ duration: 0.85, ease: EASE, delay: 0.035 * i }}
+                >
+                  {ch === " " ? "\u00A0" : ch}
+                </motion.span>
+              ))}
+            </span>
           </h2>
 
           <motion.div
@@ -265,20 +223,23 @@ export default function SonarFooter() {
           </p>
         </div>
 
-        <div aria-hidden="true" className="relative h-[10.5vw] overflow-hidden">
-          <motion.div
-            initial={reduced ? { y: "18%" } : { y: "60%" }}
-            whileInView={{ y: "0%" }}
-            viewport={{ once: true, margin: "0px 0px -4% 0px" }}
-            transition={{ duration: 1.2, ease: EASE }}
-            className="absolute inset-x-0 top-0 flex justify-center font-display text-[15.5vw] font-black uppercase leading-[0.82] tracking-[-0.05em] text-white"
-          >
+        <div aria-hidden="true" className="relative mt-[4vw] h-[11vw] overflow-hidden">
+          <div className="absolute inset-x-0 top-0 flex justify-center">
             {"SONAR".split("").map((letter, i) => (
-              <span key={i} className="inline-block">
-                {letter}
+              <span key={i} className="inline-block overflow-hidden pb-[0.04em]">
+                <motion.span
+                  className="inline-block cursor-default will-change-transform font-display text-[15.5vw] font-black uppercase leading-[0.82] tracking-[-0.05em] text-white"
+                  initial={reduced ? { opacity: 0 } : { y: "112%" }}
+                  whileInView={reduced ? { opacity: 1 } : { y: "0%" }}
+                  viewport={{ once: true, margin: "0px 0px -4% 0px" }}
+                  whileHover={reduced ? undefined : { y: "-9%" }}
+                  transition={{ duration: 1, ease: EASE, delay: 0.07 * i }}
+                >
+                  {letter}
+                </motion.span>
               </span>
             ))}
-          </motion.div>
+          </div>
         </div>
       </div>
     </footer>
