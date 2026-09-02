@@ -32,6 +32,7 @@ const quadY = (t: number) =>
 
 export default function SonarFooter() {
   const reduced = usePrefersReducedMotion();
+  const [hovered, setHovered] = useState<number | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const finaleRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ w: 0, h: 0 });
@@ -235,24 +236,46 @@ export default function SonarFooter() {
               whileInView="show"
               viewport={{ once: true, margin: "0px 0px -2% 0px" }}
             >
-              {"SONAR".split("").map((letter, i) => (
-                <span key={i} className="inline-block overflow-hidden pb-[0.06em]">
-                  <motion.span
-                    className="inline-block cursor-default will-change-transform font-display text-[17vw] font-black uppercase leading-[0.8] tracking-[-0.05em] text-white"
-                    custom={i}
-                    variants={{
-                      hidden: { y: "115%" },
-                      show: (d: number) => ({
-                        y: "0%",
-                        transition: { duration: 1, ease: EASE, delay: 0.09 * d },
-                      }),
-                    }}
-                    whileHover={{ y: "-8%", transition: { duration: 0.25, ease: EASE } }}
-                  >
-                    {letter}
-                  </motion.span>
-                </span>
-              ))}
+              {"SONAR".split("").map((letter, i) => {
+                const isHovered = hovered === i;
+                const dist = hovered === null ? 99 : Math.abs(i - hovered);
+                const dip =
+                  dist === 0 ? "34%" : dist === 1 ? "-8%" : dist === 2 ? "4%" : "0%";
+                return (
+                  <span key={i} className="inline-block overflow-hidden pb-[0.06em]">
+                    <motion.span
+                      className="inline-block will-change-transform"
+                      custom={i}
+                      variants={{
+                        hidden: { y: "115%" },
+                        show: (d: number) => ({
+                          y: "0%",
+                          transition: { duration: 1, ease: EASE, delay: 0.09 * d },
+                        }),
+                      }}
+                    >
+                      <motion.span
+                        className={`inline-block cursor-default font-display text-[17vw] font-black uppercase leading-[0.8] tracking-[-0.05em] will-change-transform ${
+                          isHovered ? "text-transparent" : "text-white"
+                        }`}
+                        style={
+                          isHovered
+                            ? { WebkitTextStroke: "2px rgba(255,255,255,0.9)" }
+                            : undefined
+                        }
+                        animate={{ y: dip, rotate: isHovered ? 5 : 0 }}
+                        transition={{ type: "spring", stiffness: 260, damping: 17 }}
+                        onHoverStart={() => setHovered(i)}
+                        onHoverEnd={() =>
+                          setHovered((cur) => (cur === i ? null : cur))
+                        }
+                      >
+                        {letter}
+                      </motion.span>
+                    </motion.span>
+                  </span>
+                );
+              })}
             </motion.div>
           )}
         </div>
