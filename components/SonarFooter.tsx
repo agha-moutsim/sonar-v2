@@ -223,23 +223,38 @@ export default function SonarFooter() {
           </p>
         </div>
 
-        <div aria-hidden="true" className="relative mt-[4vw] h-[11vw] overflow-hidden">
-          <div className="absolute inset-x-0 top-0 flex justify-center">
-            {"SONAR".split("").map((letter, i) => (
-              <span key={i} className="inline-block overflow-hidden pb-[0.04em]">
-                <motion.span
-                  className="inline-block cursor-default will-change-transform font-display text-[15.5vw] font-black uppercase leading-[0.82] tracking-[-0.05em] text-white"
-                  initial={reduced ? { opacity: 0 } : { y: "112%" }}
-                  whileInView={reduced ? { opacity: 1 } : { y: "0%" }}
-                  viewport={{ once: true, margin: "0px 0px -4% 0px" }}
-                  whileHover={reduced ? undefined : { y: "-9%" }}
-                  transition={{ duration: 1, ease: EASE, delay: 0.07 * i }}
-                >
-                  {letter}
-                </motion.span>
-              </span>
-            ))}
-          </div>
+        <div aria-hidden="true" className="relative mt-[4vw] h-[12vw] overflow-hidden">
+          {reduced ? (
+            <div className="absolute inset-x-0 top-0 flex justify-center font-display text-[17vw] font-black uppercase leading-[0.8] tracking-[-0.05em] text-white">
+              SONAR
+            </div>
+          ) : (
+            <motion.div
+              className="absolute inset-x-0 top-0 flex justify-center"
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, margin: "0px 0px -2% 0px" }}
+            >
+              {"SONAR".split("").map((letter, i) => (
+                <span key={i} className="inline-block overflow-hidden pb-[0.06em]">
+                  <motion.span
+                    className="inline-block cursor-default will-change-transform font-display text-[17vw] font-black uppercase leading-[0.8] tracking-[-0.05em] text-white"
+                    custom={i}
+                    variants={{
+                      hidden: { y: "115%" },
+                      show: (d: number) => ({
+                        y: "0%",
+                        transition: { duration: 1, ease: EASE, delay: 0.09 * d },
+                      }),
+                    }}
+                    whileHover={{ y: "-8%", transition: { duration: 0.25, ease: EASE } }}
+                  >
+                    {letter}
+                  </motion.span>
+                </span>
+              ))}
+            </motion.div>
+          )}
         </div>
       </div>
     </footer>
