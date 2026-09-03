@@ -33,10 +33,11 @@ export default function LandingHero() {
     if (!container) return;
 
     const COUNT = window.matchMedia("(max-width: 720px)").matches ? 9000 : 20000;
+    const isMobile = window.matchMedia("(max-width: 720px)").matches;
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 1000);
-    camera.position.set(0, 2, 66);
+    camera.position.set(0, 2, isMobile ? 54 : 66);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -58,9 +59,9 @@ export default function LandingHero() {
     for (let i = 0; i < COUNT; i++) {
       current.push(
         new THREE.Vector3(
-          (Math.random() - 0.5) * 100,
-          (Math.random() - 0.5) * 100,
-          (Math.random() - 0.5) * 100
+          (Math.random() - 0.5) * 16,
+          (Math.random() - 0.5) * 16,
+          (Math.random() - 0.5) * 16
         )
       );
       const idx = i * 3;
