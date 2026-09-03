@@ -779,7 +779,7 @@ export default function SonarWallet() {
                 </AnimatePresence>
 
                 <AnimatePresence>
-                  {sendStep === "form" && (
+                  {sendStep !== "idle" && (
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
