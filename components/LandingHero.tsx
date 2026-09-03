@@ -1,21 +1,38 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { IdCard, CreditCard, Wallet } from "lucide-react";
 import { SHARK_POS, SHARK_COL } from "../lib/shark-data";
 import { usePrefersReducedMotion } from "../lib/usePrefersReducedMotion";
 import "./landing-hero.css";
 
-const COUNT = 20000;
+const MENU_LINKS = [
+  { label: "Digital IDs", href: "#sonar-ids" },
+  { label: "Crypto Payments", href: "#sonar-wallet" },
+  { label: "Web3 Wallets", href: "#sonar-hub" },
+  { label: "Roadmap", href: "#roadmap" },
+  { label: "Docs", href: "#ecosystem" },
+  { label: "Team", href: "#team" },
+];
 
 export default function LandingHero() {
   const sharkRef = useRef<HTMLDivElement>(null);
   const reduced = usePrefersReducedMotion();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
 
   useEffect(() => {
     const container = sharkRef.current;
     if (!container) return;
+
+    const COUNT = window.matchMedia("(max-width: 720px)").matches ? 9000 : 20000;
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 1000);
@@ -117,8 +134,7 @@ export default function LandingHero() {
     <div className="landing-hero">
       <nav className="navbar">
         <a className="nav-logo" href="#">
-          <span className="logo-mark"></span>
-          GATEWAY
+          <img src="/logo-sonar.png" alt="SONAR" className="nav-logo-img" />
         </a>
 
         <ul className="nav-links">
@@ -156,17 +172,17 @@ export default function LandingHero() {
             </div>
           </li>
           <li className="nav-item">
-            <a href="#" className="nav-link">
+            <a href="#roadmap" className="nav-link">
               Roadmap
             </a>
           </li>
           <li className="nav-item">
-            <a href="#" className="nav-link">
+            <a href="#ecosystem" className="nav-link">
               Docs
             </a>
           </li>
           <li className="nav-item">
-            <a href="#" className="nav-link">
+            <a href="#team" className="nav-link">
               Team
             </a>
           </li>
@@ -176,7 +192,37 @@ export default function LandingHero() {
           <span className="ab-text">Your ID Dashboard</span>
           <span className="ab-border"></span>
         </a>
+
+        <button
+          type="button"
+          className={`nav-burger ${menuOpen ? "open" : ""}`}
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen((v) => !v)}
+        >
+          <span className="burger-line"></span>
+          <span className="burger-line"></span>
+        </button>
       </nav>
+
+      <div className={`mobile-menu ${menuOpen ? "open" : ""}`} aria-hidden={!menuOpen}>
+        <ul className="mm-links">
+          {MENU_LINKS.map((link, i) => (
+            <li
+              key={link.label}
+              style={{ transitionDelay: menuOpen ? `${0.08 + i * 0.055}s` : "0s" }}
+            >
+              <a href={link.href} onClick={() => setMenuOpen(false)}>
+                <span className="mm-index">/ {String(i + 1).padStart(2, "0")}</span>
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+        <a href="#" className="mm-cta" onClick={() => setMenuOpen(false)}>
+          Your ID Dashboard
+        </a>
+      </div>
 
       <section className="hero">
         <div className="hero-inner">

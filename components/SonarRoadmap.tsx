@@ -294,7 +294,7 @@ export default function SonarRoadmap() {
   }, [horizontal]);
 
   return (
-    <div ref={wrapRef} className="sonar-bg relative overflow-hidden border-t border-white/[0.06]">
+    <div id="roadmap" ref={wrapRef} className="sonar-bg relative overflow-hidden border-t border-white/[0.06]">
       <div
         className={`relative flex flex-col px-6 sm:px-10 lg:px-[7vw] ${
           horizontal ? "lg:h-screen lg:justify-center lg:py-0" : "py-24 md:py-32"

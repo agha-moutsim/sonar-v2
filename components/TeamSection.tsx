@@ -290,7 +290,7 @@ export default function TeamSection() {
   };
 
   return (
-    <section className="sonar-bg relative w-full border-t border-white/[0.06] py-20 md:py-28">
+    <section id="team" className="sonar-bg relative w-full border-t border-white/[0.06] py-20 md:py-28">
       <div className="mx-auto max-w-[1440px] px-6 text-center sm:px-10 lg:px-16">
         <motion.p
           initial={{ opacity: 0 }}
