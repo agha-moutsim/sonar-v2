@@ -37,7 +37,6 @@ export default function LandingHero() {
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 1000);
-    camera.position.set(0, 2, isMobile ? 54 : 66);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -71,15 +70,49 @@ export default function LandingHero() {
     }
     if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
 
+    // Bounding box of the visible shark (data uses y < -100 as "hidden" markers)
+    let minX = Infinity,
+      maxX = -Infinity,
+      minY = Infinity,
+      maxY = -Infinity;
+    for (let i = 0; i < COUNT; i++) {
+      if (SHARK_POS[i * 3 + 1] < -100) continue;
+      const x = SHARK_POS[i * 3];
+      const y = SHARK_POS[i * 3 + 1];
+      if (x < minX) minX = x;
+      if (x > maxX) maxX = x;
+      if (y < minY) minY = y;
+      if (y > maxY) maxY = y;
+    }
+    const cx = (minX + maxX) / 2;
+    const cy = (minY + maxY) / 2;
+    const rotX = 0.08;
+    const halfW = (maxX - minX) / 2;
+    const halfH = halfW * Math.sin(rotX) + ((maxY - minY) / 2) * Math.cos(rotX);
+    const vFov = (camera.fov * Math.PI) / 180;
+    // Y-rotation swings the shark's sides toward/away from the camera; the
+    // near side gets magnified, so the camera distance must add that depth.
+    const zSwing = halfW * Math.sin(0.35);
+
     const el = container;
     function resize() {
       const w = el.clientWidth;
       const h = el.clientHeight;
+      if (w === 0 || h === 0) return;
       camera.aspect = w / h;
+      const hFov = 2 * Math.atan(Math.tan(vFov / 2) * camera.aspect);
+      const pad = window.matchMedia("(max-width: 720px)").matches ? 1.1 : 1.4;
+      const dist =
+        Math.max(halfH / Math.tan(vFov / 2), halfW / Math.tan(hFov / 2)) * pad +
+        zSwing;
+      camera.position.set(cx, cy, dist);
+      camera.lookAt(cx, cy, 0);
       camera.updateProjectionMatrix();
       renderer.setSize(w, h, false);
     }
     window.addEventListener("resize", resize);
+    const ro = new ResizeObserver(resize);
+    ro.observe(el);
     resize();
 
     function applyInstances() {
@@ -123,6 +156,7 @@ export default function LandingHero() {
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
+      ro.disconnect();
       mesh.dispose();
       geometry.dispose();
       material.dispose();
