@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import * as THREE from "three";
 import { IdCard, CreditCard, Wallet } from "lucide-react";
-import { SHARK_POS, SHARK_COL } from "../lib/shark-data";
+import { ParticlesSwarm } from "../lib/particles-swarm";
 import { usePrefersReducedMotion } from "../lib/usePrefersReducedMotion";
 import "./landing-hero.css";
 
@@ -34,134 +33,11 @@ export default function LandingHero() {
 
     const COUNT = window.matchMedia("(max-width: 720px)").matches ? 9000 : 20000;
     const isMobile = window.matchMedia("(max-width: 720px)").matches;
-
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 1000);
-
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    container.appendChild(renderer.domElement);
-
-    const group = new THREE.Group();
-    scene.add(group);
-
-    const geometry = new THREE.TetrahedronGeometry(0.25);
-    const material = new THREE.MeshBasicMaterial();
-    const mesh = new THREE.InstancedMesh(geometry, material, COUNT);
-    group.add(mesh);
-
-    const dummy = new THREE.Object3D();
-    const color = new THREE.Color();
-    const targets: THREE.Vector3[] = [];
-    const current: THREE.Vector3[] = [];
-
-    for (let i = 0; i < COUNT; i++) {
-      current.push(
-        new THREE.Vector3(
-          (Math.random() - 0.5) * 16,
-          (Math.random() - 0.5) * 16,
-          (Math.random() - 0.5) * 16
-        )
-      );
-      const idx = i * 3;
-      targets.push(new THREE.Vector3(SHARK_POS[idx], SHARK_POS[idx + 1], SHARK_POS[idx + 2]));
-      color.setRGB(SHARK_COL[idx] / 255, SHARK_COL[idx + 1] / 255, SHARK_COL[idx + 2] / 255);
-      mesh.setColorAt(i, color);
-    }
-    if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
-
-    // Bounding box of the visible shark (data uses y < -100 as "hidden" markers)
-    let minX = Infinity,
-      maxX = -Infinity,
-      minY = Infinity,
-      maxY = -Infinity;
-    for (let i = 0; i < COUNT; i++) {
-      if (SHARK_POS[i * 3 + 1] < -100) continue;
-      const x = SHARK_POS[i * 3];
-      const y = SHARK_POS[i * 3 + 1];
-      if (x < minX) minX = x;
-      if (x > maxX) maxX = x;
-      if (y < minY) minY = y;
-      if (y > maxY) maxY = y;
-    }
-    const cx = (minX + maxX) / 2;
-    const cy = (minY + maxY) / 2;
-    const rotX = 0.08;
-    const halfW = (maxX - minX) / 2;
-    const halfH = halfW * Math.sin(rotX) + ((maxY - minY) / 2) * Math.cos(rotX);
-    const vFov = (camera.fov * Math.PI) / 180;
-    // Y-rotation swings the shark's sides toward/away from the camera; the
-    // near side gets magnified, so the camera distance must add that depth.
-    const zSwing = halfW * Math.sin(0.35);
-
-    const el = container;
-    function resize() {
-      const w = el.clientWidth;
-      const h = el.clientHeight;
-      if (w === 0 || h === 0) return;
-      camera.aspect = w / h;
-      const hFov = 2 * Math.atan(Math.tan(vFov / 2) * camera.aspect);
-      const pad = window.matchMedia("(max-width: 720px)").matches ? 1.1 : 1.4;
-      const dist =
-        Math.max(halfH / Math.tan(vFov / 2), halfW / Math.tan(hFov / 2)) * pad +
-        zSwing;
-      camera.position.set(cx, cy, dist);
-      camera.lookAt(cx, cy, 0);
-      camera.updateProjectionMatrix();
-      renderer.setSize(w, h, false);
-    }
-    window.addEventListener("resize", resize);
-    const ro = new ResizeObserver(resize);
-    ro.observe(el);
-    resize();
-
-    function applyInstances() {
-      for (let i = 0; i < COUNT; i++) {
-        dummy.position.copy(current[i]);
-        const c = SHARK_COL[i * 3] + SHARK_COL[i * 3 + 1] + SHARK_COL[i * 3 + 2];
-        const s = targets[i].y < -100 || c === 0 ? 0 : 1;
-        dummy.scale.setScalar(s);
-        dummy.updateMatrix();
-        mesh.setMatrixAt(i, dummy.matrix);
-      }
-      mesh.instanceMatrix.needsUpdate = true;
-    }
-
-    let raf = 0;
-    const clock = new THREE.Clock();
-    function animate() {
-      raf = requestAnimationFrame(animate);
-      const t = clock.getElapsedTime();
-
-      for (let i = 0; i < COUNT; i++) {
-        current[i].lerp(targets[i], 0.08);
-      }
-      applyInstances();
-
-      group.rotation.y = Math.sin(t * 0.25) * 0.35;
-      group.rotation.x = Math.sin(t * 0.18) * 0.08;
-
-      renderer.render(scene, camera);
-    }
-
-    if (reduced) {
-      for (let i = 0; i < COUNT; i++) current[i].copy(targets[i]);
-      applyInstances();
-      group.rotation.y = 0.2;
-      renderer.render(scene, camera);
-    } else {
-      animate();
-    }
+    const swarm = new ParticlesSwarm(container, isMobile ? 9000 : 20000);
+    if (reduced) swarm.snapToFormation();
 
     return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener("resize", resize);
-      ro.disconnect();
-      mesh.dispose();
-      geometry.dispose();
-      material.dispose();
-      renderer.dispose();
-      renderer.domElement.remove();
+      swarm.dispose();
     };
   }, [reduced]);
 

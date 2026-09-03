@@ -483,7 +483,6 @@
 
 .landing-hero .hero-inner {
   position: relative;
-  z-index: 2;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -536,6 +535,11 @@
 .landing-hero #shark3d canvas {
   width: 100% !important;
   height: 100% !important;
+}
+
+/* the swarm composer renders an opaque black bg — screen-blend it into the hero */
+.landing-hero #shark3d {
+  mix-blend-mode: screen;
 }
 
 .landing-hero .mission {
