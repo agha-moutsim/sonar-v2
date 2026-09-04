@@ -447,6 +447,7 @@
   position: relative;
   min-height: 100vh;
   background:
+    linear-gradient(180deg, transparent 88%, #000 100%),
     radial-gradient(ellipse 60% 22% at 22% -5%, rgba(70, 76, 88, 0.55), transparent 60%),
     linear-gradient(
       180deg,

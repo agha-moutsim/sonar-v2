@@ -69,7 +69,7 @@ export default function SonarFooter() {
   const trailProgress = reduced ? { pathLength: 1 } : { pathLength: smoothed };
 
   return (
-    <footer ref={sectionRef} className="sonar-bg relative w-full overflow-hidden">
+    <footer ref={sectionRef} className="sonar-bg edge-fade-top-magenta relative w-full overflow-hidden">
       <div
         ref={finaleRef}
         className="relative flex min-h-[76vh] flex-col justify-center overflow-hidden px-6 pb-10 pt-24 sm:px-10 lg:min-h-[86vh] lg:px-16"

@@ -52,6 +52,43 @@ body {
   background: #000000;
 }
 
+/* brand-tint section edge blends (SONAR violet / magenta) */
+.edge-fade-top::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 160px;
+  pointer-events: none;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(123, 63, 228, 0.08), transparent 75%);
+}
+
+.edge-fade-top-magenta::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 160px;
+  pointer-events: none;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(255, 46, 147, 0.06), transparent 75%);
+}
+
+.edge-fade-bottom::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 160px;
+  pointer-events: none;
+  z-index: 1;
+  background: linear-gradient(0deg, rgba(255, 46, 147, 0.06), transparent 75%);
+}
+
 /* hero (sonar-v2) keyframes */
 @keyframes hero-brand-ping {
   0% {

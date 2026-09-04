@@ -468,7 +468,7 @@ export default function SonarHub() {
   const [active, setActive] = useState<ConsoleState>("auth");
 
   return (
-    <section id="sonar-hub" className="sonar-bg relative w-full border-t border-white/[0.06] py-24 md:py-36">
+    <section id="sonar-hub" className="sonar-bg edge-fade-top relative w-full border-t border-white/[0.06] py-24 md:py-36">
       <div className="mx-auto grid w-full max-w-[1440px] gap-14 px-6 sm:px-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16 lg:px-16">
         <div className="self-start lg:sticky lg:top-24">
           <HubConsole active={active} reduced={reduced} />
