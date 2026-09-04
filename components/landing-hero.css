@@ -641,9 +641,9 @@
   }
   .landing-hero #shark3d {
     width: 140vw;
-    height: 42vh;
+    height: 40vh;
     left: 50%;
-    top: 16%;
+    top: 22%;
     transform: translateX(-50%);
   }
   .landing-hero .map-card {
