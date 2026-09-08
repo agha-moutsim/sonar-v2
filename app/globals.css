@@ -76,6 +76,13 @@ html {
   background: var(--color-sonar-ink-faint);
 }
 
+/* Section base — void background with overflow containment */
+.sonar-bg {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-sonar-void);
+}
+
 /* One accent — tinted section edges, used sparingly */
 .edge-fade-top::before {
   content: "";
@@ -87,6 +94,18 @@ html {
   pointer-events: none;
   z-index: 1;
   background: linear-gradient(180deg, rgba(116, 199, 184, 0.05), transparent 75%);
+}
+
+.edge-fade-top-magenta::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 140px;
+  pointer-events: none;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(116, 199, 184, 0.04), transparent 75%);
 }
 
 /* Panels: glass with a signal-tinted inner hairline — elevation without borders-everywhere */
