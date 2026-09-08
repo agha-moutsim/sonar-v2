@@ -10,16 +10,17 @@ import {
 } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ArrowUpRight, Send, X } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { usePrefersReducedMotion } from "@/lib/usePrefersReducedMotion";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-const FOOTER_LINKS: { title: string; links: string[] }[] = [
-  { title: "Resources", links: ["Gitbook", "Integration Docs", "Audits"] },
-  { title: "SONAR Products", links: ["SONAR IDs", "SONAR Hub", "SONAR Wallet", "Staking"] },
-  { title: "About", links: ["Team", "Merchandise", "Contact Us"] },
-  { title: "Social Media", links: ["X", "Telegram"] },
+const FOOTER_LINKS: { label: string; href: string }[] = [
+  { label: "Claim a SONAR ID", href: "#sonar-id-claim" },
+  { label: "SONAR Wallet", href: "#sonar-wallet" },
+  { label: "Ecosystem", href: "#ecosystem" },
+  { label: "Roadmap", href: "#roadmap" },
+  { label: "Team", href: "#team" },
 ];
 
 const TAGLINE =
@@ -154,16 +155,7 @@ export default function SonarFooter() {
             transition={{ duration: 0.9, ease: EASE, delay: 0.25 }}
             className="mt-8 flex flex-wrap items-center gap-5"
           >
-            <p className="text-base text-white/60 sm:text-lg">
-              Come join our community on Telegram!
-            </p>
-            <a
-              href="#"
-              className="inline-flex items-center gap-2.5 rounded-full bg-white px-7 py-3 font-mono text-xs font-bold uppercase tracking-[0.15em] text-black transition-transform duration-300 hover:scale-[1.04] active:scale-95"
-            >
-              <Send className="h-4 w-4" aria-hidden="true" />
-              Join Here
-            </a>
+            <div className="tag">Community opens with the Hub — roadmap has the dates</div>
           </motion.div>
         </div>
       </div>
@@ -182,42 +174,30 @@ export default function SonarFooter() {
             <p className="mt-4 max-w-[30ch] text-sm leading-[1.85] text-white/55">{TAGLINE}</p>
           </motion.div>
 
-          <div className="grid grid-cols-2 gap-10 sm:grid-cols-4">
-            {FOOTER_LINKS.map((column, ci) => (
-              <motion.div
-                key={column.title}
-                initial={{ opacity: 0, y: 30 }}
+          <div className="flex flex-wrap gap-x-10 gap-y-3 lg:justify-end">
+            {FOOTER_LINKS.map((link, li) => (
+              <motion.a
+                key={link.href}
+                href={link.href}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-60px" }}
-                transition={{ duration: 0.8, ease: EASE, delay: 0.08 * ci }}
+                transition={{ duration: 0.8, ease: EASE, delay: 0.05 * li }}
+                className="group inline-flex items-center gap-1.5 text-sm text-white/60 transition-colors duration-300 hover:text-white"
               >
-                <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-white/40">
-                  {column.title}
-                </p>
-                <ul className="mt-5 space-y-1">
-                  {column.links.map((link) => (
-                    <li key={link}>
-                      <a
-                        href="#"
-                        className="group inline-flex items-center gap-1.5 py-1.5 text-sm text-white/60 transition-colors duration-300 hover:text-white"
-                      >
-                        {link}
-                        <ArrowUpRight
-                          className="h-3.5 w-3.5 opacity-0 transition-all duration-300 group-hover:translate-x-0.5 group-hover:opacity-70"
-                          aria-hidden="true"
-                        />
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
+                {link.label}
+                <ArrowUpRight
+                  className="h-3.5 w-3.5 opacity-0 transition-all duration-300 group-hover:translate-x-0.5 group-hover:opacity-70"
+                  aria-hidden="true"
+                />
+              </motion.a>
             ))}
           </div>
         </div>
 
         <div className="mx-auto mt-14 flex w-full max-w-[1440px] items-center justify-between border-t border-white/[0.06] py-6">
           <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-white/25">
-            © 2025 SONAR — All rights reserved
+            © {new Date().getFullYear()} SONAR — All rights reserved
           </p>
           <p className="hidden font-mono text-[10px] uppercase tracking-[0.25em] text-white/25 sm:block">
             End of transmission
