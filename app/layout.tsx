@@ -1,36 +1,34 @@
-import type { Metadata } from "next";
-import { Archivo, Inter, Space_Grotesk, Space_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Outfit, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-const archivo = Archivo({
-  variable: "--font-display",
-  subsets: ["latin"],
-  axes: ["wdth"],
-});
-
-const inter = Inter({
-  variable: "--font-inter",
+const outfit = Outfit({
+  variable: "--font-outfit",
   subsets: ["latin"],
   display: "swap",
 });
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const spaceMono = Space_Mono({
-  variable: "--font-space-mono",
-  weight: ["400", "700"],
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
   subsets: ["latin"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "SONAR — Your Gateway to Web3",
+  title: "SONAR — One name. Every chain.",
   description:
-    "Replacing complex blockchain addresses with simple, secure usernames.",
+    "SONAR replaces tangled wallet addresses with a single web3 identity. Claim a SONAR ID, route every chain through it, and hold your assets in one wallet.",
+  openGraph: {
+    title: "SONAR — One name. Every chain.",
+    description:
+      "Replacing tangled wallet addresses with a single web3 identity. Claim a SONAR ID and route every chain through it.",
+    type: "website",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#070b10",
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -41,9 +39,17 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${archivo.variable} ${inter.variable} ${spaceGrotesk.variable} ${spaceMono.variable}`}
+      className={`${outfit.variable} ${geistMono.variable}`}
     >
-      <body className="bg-black text-[#e7e9ee] antialiased">{children}</body>
+      <body className="bg-sonar-void text-sonar-ink antialiased">
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-sonar-signal focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-sonar-void"
+        >
+          Skip to content
+        </a>
+        {children}
+      </body>
     </html>
   );
 }
