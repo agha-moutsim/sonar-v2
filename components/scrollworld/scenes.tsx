@@ -15,6 +15,14 @@ import {
   ShadowDisc,
   Floaty,
 } from "./clay";
+import {
+  IdCard,
+  AddressReceipt,
+  ClaimForm,
+  WalletCard,
+  ComingSoonBoard,
+  ClaimBillboard,
+} from "./artifacts";
 
 /* Six scenes of the journey, laid out left to right along +X.
    Each is a floating clay diorama. Camera dives into one, pulls up,
@@ -53,6 +61,7 @@ export function SceneSurface({ animate = true }: { animate?: boolean }) {
       <ClayTree position={[-2.2, 2.4, -0.8]} scale={1.15} />
       <ClayTree position={[-1.2, 2.45, 1.1]} scale={0.8} variant={1} />
       <ClayHouse position={[0.2, 2.45, -1.6]} rotation={[0, 0.5, 0]} scale={0.85} />
+      <IdCard position={[-2.1, 5.9, 0.6]} />
       <ShadowDisc radius={9} y={-3.6} />
     </group>
   );
@@ -128,6 +137,7 @@ export function SceneTangle({ animate = true }: { animate?: boolean }) {
           <icosahedronGeometry args={[0.7, 0]} />
         </mesh>
       </group>
+      <AddressReceipt position={[0.6, 3.8, 2.4]} rotation={[0, -0.18, -0.05]} />
       <ShadowDisc radius={8} y={-3.4} />
     </group>
   );
@@ -199,6 +209,7 @@ export function SceneLighthouse({ animate = true }: { animate?: boolean }) {
       </group>
       <ClayTree position={[2.6, 2.4, -1.4]} scale={1.0} variant={1} />
       <ClayHouse position={[1.9, 2.35, 0.1]} rotation={[0, -0.8, 0]} scale={0.75} wall={CLAY.cream} roof={CLAY.seaDeep} />
+      <ClaimForm position={[3.1, 5.6, 1.6]} rotation={[0, -0.3, 0]} />
       <ShadowDisc radius={9} y={-3.6} />
     </group>
   );
@@ -245,6 +256,7 @@ export function SceneRoutes({ animate = true }: { animate?: boolean }) {
         </group>
       </Floaty>
       <SonarRings position={[0, 2.2, 0]} maxScale={4.5} speed={0.35} animate={animate} />
+      <WalletCard position={[-3.6, 5.6, 2.6]} rotation={[0, 0.32, 0]} />
       <ShadowDisc radius={8.5} y={-3.8} />
     </group>
   );
@@ -306,6 +318,7 @@ export function SceneHub({ animate = true }: { animate?: boolean }) {
         </group>
       </group>
       <ClayTree position={[3.4, 2.3, -0.2]} scale={0.9} />
+      <ComingSoonBoard position={[3.6, 4.0, 2.2]} rotation={[0, -0.45, 0]} />
       <SonarRings position={[0, 3.2, 0]} maxScale={5} speed={0.3} animate={animate} />
       <ShadowDisc radius={9} y={-3.6} />
     </group>
@@ -363,6 +376,7 @@ export function SceneCoin({ animate = true }: { animate?: boolean }) {
       <ClayTree position={[-2.6, 2.6, -1.6]} scale={1.1} />
       <ClayTree position={[2.4, 2.55, 1.4]} scale={0.85} variant={1} />
       <ClayHouse position={[2.6, 2.55, -1.2]} rotation={[0, -0.6, 0]} scale={0.8} wall={CLAY.cream} roof={CLAY.terracotta} />
+      <ClaimBillboard position={[-4.4, 5.2, 2.0]} />
       <ShadowDisc radius={9.5} y={-3.8} />
     </group>
   );
